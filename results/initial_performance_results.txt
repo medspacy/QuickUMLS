@@ -1,0 +1,19 @@
+(quickumls) c:\git\QuickUMLS_burgersmoke>python performance_test.py
+Creating QuickUMLS object...
+QuickUMLS object created...
+Length of Text : 1600 characters
+About to reprocess this text [1000] times
+Progress : [0/1000]
+Progress : [100/1000]
+Progress : [200/1000]
+Progress : [300/1000]
+Progress : [400/1000]
+Progress : [500/1000]
+Progress : [600/1000]
+Progress : [700/1000]
+Progress : [800/1000]
+Progress : [900/1000]
+Total results received : [30000]
+Total time for [1000] documents was [173.31265568733215] seconds
+Avg time per document : [0.17331265568733215] seconds
+DONE with performance test
