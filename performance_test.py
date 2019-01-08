@@ -41,25 +41,29 @@ for i in range(total_iterations):
     filename = '{0}.csv'.format(i)
     f = open(os.path.join(output_dir, filename), 'w')
 
-    results = matcher.match(text, best_match=True, ignore_syntax=ignore_syntax)
-    results_list.append(results)
-    result_count += len(results)
+    match_results = matcher.match(text, best_match=True, ignore_syntax=ignore_syntax)
+    results_list.append(match_results)
+    result_count += len(match_results)
     
     header = 'CUI,semtypes,text,start,end\n'
     f.write(header)
     
-    for result_dict in results:
-        line = '{0},"{1}","{2}",{3},{4}\n'.format(result_dict['cui'], 
-            result_dict['semtypes'],
-            result_dict['ngram'],
-            result_dict['start'],
-            result_dict['end'])
-        f.write(line)
+    # this is a list of lists
+    for match_result in match_results:
+        # each match may contain multiple ngram entries
+        for ngram_match_dict in match_result:
+            #print(ngram_match_dict)
+            line = '{0},"{1}","{2}",{3},{4}\n'.format(ngram_match_dict['cui'], 
+                ngram_match_dict['semtypes'],
+                ngram_match_dict['ngram'],
+                ngram_match_dict['start'],
+                ngram_match_dict['end'])
+            f.write(line)
     
     f.close()
     
     #print('Matching results:')
-    #print(results)
+    #print(match_results)
     
 end_time = time.time()
 
