@@ -15,6 +15,7 @@ matcher = QuickUMLS(quickumls_path)
 print('QuickUMLS object created...')
 
 total_iterations = 1000
+ignore_syntax = False
 
 text_file_path = r'data/colonoscopy-1.txt'
 file = open(text_file_path, 'r') 
@@ -34,7 +35,7 @@ for i in range(total_iterations):
     if i % 100 == 0:
         print('Progress : [{0}/{1}]'.format(i, total_iterations))
 
-    res = matcher.match(text, best_match=True, ignore_syntax=False)
+    res = matcher.match(text, best_match=True, ignore_syntax=ignore_syntax)
     results_list.append(res)
     result_count += len(res)
     
