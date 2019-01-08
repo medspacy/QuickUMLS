@@ -14,7 +14,7 @@ matcher = QuickUMLS(quickumls_path)
 
 print('QuickUMLS object created...')
 
-total_iterations = 1000
+total_iterations = 10
 ignore_syntax = False
 
 text_file_path = r'data/colonoscopy-1.txt'
@@ -31,16 +31,35 @@ result_count = 0
 
 start_time = time.time()
 
+output_dir = 'output/performance_test'
+
 for i in range(total_iterations):
     if i % 100 == 0:
         print('Progress : [{0}/{1}]'.format(i, total_iterations))
 
-    res = matcher.match(text, best_match=True, ignore_syntax=ignore_syntax)
-    results_list.append(res)
-    result_count += len(res)
+        
+    filename = '{0}.csv'.format(i)
+    f = open(os.path.join(output_dir, filename), 'w')
+
+    results = matcher.match(text, best_match=True, ignore_syntax=ignore_syntax)
+    results_list.append(results)
+    result_count += len(results)
+    
+    header = 'CUI,semtypes,text,start,end\n'
+    f.write(header)
+    
+    for result_dict in results:
+        line = '{0},"{1}","{2}",{3},{4}\n'.format(result_dict['cui'], 
+            result_dict['semtypes'],
+            result_dict['ngram'],
+            result_dict['start'],
+            result_dict['end'])
+        f.write(line)
+    
+    f.close()
     
     #print('Matching results:')
-    #print(res)
+    #print(results)
     
 end_time = time.time()
 
