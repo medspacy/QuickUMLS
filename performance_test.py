@@ -3,19 +3,25 @@ import os
 
 try:
     from quickumls import QuickUMLS
+    import constants
 except ImportError:
     from .quickumls import QuickUMLS
 
 print('Creating QuickUMLS object...')
     
-quickumls_path = r'C:\quickumls'
+quickumls_path = r'C:\quickumls\SNOMED_RXNORM_CPT'
     
-matcher = QuickUMLS(quickumls_path)
+total_iterations = 1
+ignore_syntax = False
+threshold = 0.7
+accepted_semtypes = None
+# accepted_semtypes = constants.ACCEPTED_SEMTYPES
+    
+print('Setting up for semtypes (None means all types) : {}'.format(accepted_semtypes))
+    
+matcher = QuickUMLS(quickumls_path, accepted_semtypes = accepted_semtypes, threshold = threshold)
 
 print('QuickUMLS object created...')
-
-total_iterations = 10
-ignore_syntax = False
 
 text_file_path = r'data/colonoscopy-1.txt'
 file = open(text_file_path, 'r') 
@@ -45,7 +51,7 @@ for i in range(total_iterations):
     results_list.append(match_results)
     result_count += len(match_results)
     
-    header = 'CUI,semtypes,text,start,end\n'
+    header = 'text,start,end,CUI\n'
     f.write(header)
     
     # this is a list of lists
@@ -53,11 +59,10 @@ for i in range(total_iterations):
         # each match may contain multiple ngram entries
         for ngram_match_dict in match_result:
             #print(ngram_match_dict)
-            line = '{0},"{1}","{2}",{3},{4}\n'.format(ngram_match_dict['cui'], 
-                ngram_match_dict['semtypes'],
-                ngram_match_dict['ngram'],
+            line = '{0},"{1}","{2}",{3}\n'.format(ngram_match_dict['ngram'], 
                 ngram_match_dict['start'],
-                ngram_match_dict['end'])
+                ngram_match_dict['end'],
+                ngram_match_dict['cui'])
             f.write(line)
     
     f.close()
