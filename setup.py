@@ -53,7 +53,7 @@ setup(
     py_modules = ['client', 'constants', 'install', 'network', 'quickumls', 'server', 'toolbox'],
 
     # NOTE : For Windows, easiest way to build simstring is with Visual Studio and Anaconda for dependencies
-    install_requires=['simstring', 'leveldb'],
+    install_requires=['simstring'],
 
     project_urls={
         'Bug Reports': 'https://github.com/Georgetown-IR-Lab/QuickUMLS/issues',
