@@ -1,0 +1,174 @@
+text,start,end,CUI,term,similarity
+"inflammatory bowel disease",70,96,C0021390,"inflammatory bowel disease",1.00
+"inflammatory bowel disease",70,96,C0592458,"inflammatory bowel disease drug",0.83
+"inflammatory bowel disease",70,96,C0021390,"ibd - inflammatory bowel disease",0.80
+"inflammatory bowel disease",70,96,C0592458,"inflammatory bowel disease agent",0.80
+"left lateral position",225,246,C0559227,"left lateral position",1.00
+"left lateral position",225,246,C0444379,"lateral position",0.74
+"left lateral position",225,246,C0426141,"left lateral brow position",0.72
+"external hemorrhoids",441,461,C0265040,"external hemorrhoids",1.00
+"external hemorrhoids",441,461,C0265040,"external hemorrhoid",0.94
+"external hemorrhoids",441,461,C0265034,"internal hemorrhoids",0.80
+"external hemorrhoids",441,461,C0265040,"external hemorrhoids, nos",0.78
+"external hemorrhoids",441,461,C0265034,"internal hemorrhoid",0.75
+"external hemorrhoids",441,461,C0564752,"external hemorrhoids -other",0.72
+"external hemorrhoids",441,461,C0193104,"external hemorrhoidectomy",0.71
+"internal hemorrhoids",1184,1204,C0265034,"internal hemorrhoids",1.00
+"internal hemorrhoids",1184,1204,C0265034,"internal hemorrhoid",0.94
+"internal hemorrhoids",1184,1204,C0265040,"external hemorrhoids",0.80
+"internal hemorrhoids",1184,1204,C0265034,"internal hemorrhoids, nos",0.78
+"internal hemorrhoids",1184,1204,C0265040,"external hemorrhoid",0.75
+"internal hemorrhoids",1184,1204,C0193105,"internal hemorrhoidectomy",0.71
+"internal hemorrhoids",1355,1375,C0265034,"internal hemorrhoids",1.00
+"internal hemorrhoids",1355,1375,C0265034,"internal hemorrhoid",0.94
+"internal hemorrhoids",1355,1375,C0265040,"external hemorrhoids",0.80
+"internal hemorrhoids",1355,1375,C0265034,"internal hemorrhoids, nos",0.78
+"internal hemorrhoids",1355,1375,C0265040,"external hemorrhoid",0.75
+"internal hemorrhoids",1355,1375,C0193105,"internal hemorrhoidectomy",0.71
+"abnormal CT scan",43,59,C0436539,"abnormal ct scan",1.00
+"Rectal bleeding",12,27,C0267596,"rectal bleeding",1.00
+"ileocecal valve",644,659,C0020880,"ileocecal valve",1.00
+"sessile polyp",875,888,C0522621,"sessile polyp",1.00
+"approximately",1544,1557,C0332232,"approximately",1.00
+"constipation",29,41,C0009806,"constipation",1.00
+"colonoscope",480,491,C0180022,"colonoscope",1.00
+"colonoscope",480,491,C0009378,"colonoscopy",0.80
+"colonoscope",923,934,C0180022,"colonoscope",1.00
+"colonoscope",923,934,C0009378,"colonoscopy",0.80
+"diverticula",1110,1121,C0012817,"diverticula",1.00
+"colonoscopy",1397,1408,C0009378,"colonoscopy",1.00
+"colonoscopy",1397,1408,C0180022,"colonoscope",0.80
+"difficulty",566,576,C1299586,"difficulty",1.00
+"difficulty",566,576,C0332218,"difficult",0.88
+"difficulty",566,576,C0563560,"difficulty wb",0.73
+"identified",665,675,C0205396,"identified",1.00
+"identified",665,675,C0205427,"unidentified",0.80
+"identified",665,675,C0600091,"identifier",0.78
+"completely",907,917,C4554154,"completely",1.00
+"completely",907,917,C0205197,"complete",0.75
+"procedure",119,128,C0184661,"procedure",1.00
+"procedure",119,128,C0449999,"subprocedure",0.70
+"procedure",119,128,C1144702,"ct procedure",0.70
+"PROCEDURE",147,156,C0184661,"procedure",1.00
+"PROCEDURE",147,156,C0449999,"subprocedure",0.70
+"PROCEDURE",147,156,C1144702,"ct procedure",0.70
+"procedure",357,366,C0184661,"procedure",1.00
+"procedure",357,366,C0449999,"subprocedure",0.70
+"procedure",357,366,C1144702,"ct procedure",0.70
+"performed",392,401,C0884358,"performed",1.00
+"performed",392,401,C1689969,"performer",0.75
+"performed",392,401,C2947996,"perform",0.71
+"ascending",865,874,C0205385,"ascending",1.00
+"withdrawn",944,953,C0424092,"withdrawn",1.00
+"endoscope",1212,1221,C0014243,"endoscope",1.00
+"endoscope",1212,1221,C0014245,"endoscopy",0.75
+"procedure",1242,1251,C0184661,"procedure",1.00
+"procedure",1242,1251,C0449999,"subprocedure",0.70
+"procedure",1242,1251,C1144702,"ct procedure",0.70
+"procedure",1292,1301,C0184661,"procedure",1.00
+"procedure",1292,1301,C0449999,"subprocedure",0.70
+"procedure",1292,1301,C1144702,"ct procedure",0.70
+"obtained",185,193,C1301820,"obtained",1.00
+"adequate",292,300,C0205411,"adequate",1.00
+"adequate",292,300,C0205412,"inadequate",0.75
+"sedation",301,309,C0344106,"sedation",1.00
+"advanced",521,529,C0205179,"advanced",1.00
+"increase",1434,1442,C0442805,"increase",1.00
+"increase",1434,1442,C0205217,"increased",0.86
+"patient",199,206,C0030705,"patient",1.00
+"patient",199,206,C0021562,"inpatient",0.71
+"Digital",368,375,C0442015,"digital",1.00
+"Digital",368,375,C0012252,"digitalis",0.71
+"Digital",368,375,C0304520,"digitalis",0.71
+"Digital",368,375,C0058012,"digitalin",0.71
+"quality",681,688,C0332306,"quality",1.00
+"removal",758,765,C0015252,"removal",1.00
+"removal",839,846,C0015252,"removal",1.00
+"colonic",998,1005,C0009368,"colonic",1.00
+"patient",1270,1277,C0030705,"patient",1.00
+"patient",1270,1277,C0021562,"inpatient",0.71
+"tablets",1450,1457,C0039225,"tablets",1.00
+"tablets",1450,1457,C0039225,"tablet",0.80
+"tablets",1450,1457,C1705223,"tablet",0.80
+"tablets",1450,1457,C4319774,"tablet",0.80
+"tablets",1490,1497,C0039225,"tablets",1.00
+"tablets",1490,1497,C0039225,"tablet",0.80
+"tablets",1490,1497,C1705223,"tablet",0.80
+"tablets",1490,1497,C4319774,"tablet",0.80
+"entire",350,356,C0439751,"entire",1.00
+"rectal",376,382,C0205052,"rectal",1.00
+"rectal",376,382,C1527425,"rectal",1.00
+"rectal",376,382,C4521903,"rectal",1.00
+"normal",412,418,C0205307,"normal",1.00
+"rectum",510,516,C0034896,"rectum",1.00
+"rectum",510,516,C1278926,"rectum",1.00
+"direct",536,542,C0439851,"direct",1.00
+"mucosa",984,990,C0026724,"mucosa",1.00
+"mucosa",1006,1012,C0026724,"mucosa",1.00
+"normal",1022,1028,C0205307,"normal",1.00
+"normal",1034,1040,C0205307,"normal",1.00
+"rectum",1160,1166,C0034896,"rectum",1.00
+"rectum",1160,1166,C1278926,"rectum",1.00
+"normal",1390,1396,C0205307,"normal",1.00
+"office",1534,1540,C0442603,"office",1.00
+"nurse",129,134,C0028661,"nurse",1.00
+"video",474,479,C0042655,"video",1.00
+"cecum",585,590,C0007531,"cecum",1.00
+"cecum",585,590,C1278925,"cecum",1.00
+"strap",608,613,C0183631,"strap",1.00
+"polyp",743,748,C0032584,"polyp",1.00
+"polyp",794,799,C0032584,"polyp",1.00
+"small",1178,1183,C0700321,"small",1.00
+"Small",1349,1354,C0700321,"small",1.00
+"fiber",1427,1432,C0225326,"fiber",1.00
+"fiber",1427,1432,C1260603,"fiber",1.00
+"twice",1458,1463,C1720725,"twice",1.00
+"total",1476,1481,C0439810,"total",1.00
+"NuLev",1508,1513,C0939414,"nulev",1.00
+"weeks",1563,1568,C0439230,"weeks",1.00
+"form",139,143,C0348078,"form",1.00
+"good",712,716,C0205170,"good",1.00
+"flat",738,742,C0205324,"flat",1.00
+"flat",738,742,C0457933,"flat",1.00
+"cold",749,753,C0009264,"cold",1.00
+"cold",749,753,C0009443,"cold",1.00
+"cold",749,753,C0024117,"cold",1.00
+"cold",749,753,C0234192,"cold",1.00
+"flat",789,793,C0205324,"flat",1.00
+"flat",789,793,C0457933,"flat",1.00
+"cold",830,834,C0009264,"cold",1.00
+"cold",830,834,C0009443,"cold",1.00
+"cold",830,834,C0024117,"cold",1.00
+"cold",830,834,C0234192,"cold",1.00
+"flat",860,864,C0205324,"flat",1.00
+"flat",860,864,C0457933,"flat",1.00
+"seen",1127,1131,C0205397,"seen",1.00
+"view",1148,1152,C0449911,"view",1.00
+"well",1302,1306,C0205170,"well",1.00
+"day",1466,1469,C0439228,"day",1.00
+"complications",1315,1328,C0009566,"complication",0.91
+"complications",1315,1328,C2362589,"complication",0.91
+"medications",261,272,C0013227,"medication",0.89
+"provided",326,334,C0359589,"provide",0.83
+"haustral",1057,1065,C0458948,"haustra",0.83
+"symptoms",1576,1584,C1457887,"symptom",0.83
+"resolve",1592,1599,C3714811,"resolved",0.83
+"preparation",696,707,C0071888,"preparation h",0.82
+"preparation",696,707,C0018062,"cg preparation",0.75
+"preparation",696,707,C0040165,"t4 preparation",0.75
+"preparation",696,707,C0041014,"t3 preparation",0.75
+"preparation",696,707,C0036679,"separation",0.70
+"preparation",696,707,C0237868,"separation",0.70
+"vascularity",1041,1052,C0027686,"neovascularity",0.75
+"informed",164,172,C0562357,"uninformed",0.75
+"placed",211,217,C0442504,"place",0.75
+"placed",211,217,C1704765,"place",0.75
+"polyps",1093,1099,C0032584,"polyp",0.75
+"PREMEDICATION",100,113,C0013227,"medication",0.73
+"INDICATION",0,10,C0392360,"indication of",0.73
+"appeared",1013,1021,C1948490,"appearex",0.71
+"consent",173,180,C2711213,"consented",0.71
+"sphincter tone",419,433,C0426763,"anal sphincter tone",0.71
+"terminated",1252,1262,C0205259,"determinate",0.70
+"IMPRESSION",1334,1344,C0332459,"compression",0.70
+"IMPRESSION",1334,1344,C4551657,"compression",0.70

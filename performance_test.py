@@ -9,7 +9,7 @@ except ImportError:
 
 print('Creating QuickUMLS object...')
     
-quickumls_path = r'C:\quickumls\SNOMED_RXNORM_CPT'
+quickumls_path = r'C:\quickumls\SNOMED_RXNORM_CPT_lowercase'
     
 total_iterations = 1
 ignore_syntax = False
@@ -51,7 +51,7 @@ for i in range(total_iterations):
     results_list.append(match_results)
     result_count += len(match_results)
     
-    header = 'text,start,end,CUI\n'
+    header = 'text,start,end,CUI,term,similarity\n'
     f.write(header)
     
     # this is a list of lists
@@ -59,10 +59,12 @@ for i in range(total_iterations):
         # each match may contain multiple ngram entries
         for ngram_match_dict in match_result:
             #print(ngram_match_dict)
-            line = '{0},"{1}","{2}",{3}\n'.format(ngram_match_dict['ngram'], 
+            line = '"{0}",{1},{2},{3},"{4}",{5:.2f}\n'.format(ngram_match_dict['ngram'], 
                 ngram_match_dict['start'],
                 ngram_match_dict['end'],
-                ngram_match_dict['cui'])
+                ngram_match_dict['cui'],
+                ngram_match_dict['term'],
+                ngram_match_dict['similarity'])
             f.write(line)
     
     f.close()
