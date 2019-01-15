@@ -48,6 +48,9 @@ setup(
     keywords='nlp umls ner',
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    
+    # until QuickUMLS is re-factored into directory structure for a package, the individual modules will be listed here:
+    py_modules = ['client', 'constants', 'install', 'network', 'quickumls', 'server', 'toolbox'],
 
     # NOTE : For Windows, easiest way to build simstring is with Visual Studio and Anaconda for dependencies
     install_requires=['simstring', 'leveldb'],
