@@ -2,11 +2,8 @@ import spacy
 from spacy.tokens import Span
 from spacy.strings import StringStore
 
-try:
-    from quickumls import QuickUMLS
-    from quickumls import constants
-except ImportError:
-    from .quickumls import QuickUMLS
+from quickumls.quickumls import QuickUMLS
+from quickumls import constants
 
 class SpacyQuickUMLS(object):
     name = 'QuickUMLS matcher'
