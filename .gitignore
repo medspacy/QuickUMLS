@@ -96,3 +96,5 @@ simstring/
 
 # Ignored test file
 test.py
+
+/output/performance_test/*.csv
