@@ -1,62 +1,74 @@
-"""Fast, unsupervised biomedical concept extraction from medical text.
-
-NOTE: 
-Skeleton for this and some comments came from PyPA sample project which illustrates a sample setuptools project:
-https://github.com/pypa/sampleproject
-
-See:
-https://github.com/Georgetown-IR-Lab/QuickUMLS
-"""
-
-# Always prefer setuptools over distutils
 from setuptools import setup, find_packages
-from os import path
-# io.open is needed for projects that support Python 2.7
-# It ensures open() defaults to text mode with universal newlines,
-# and accepts an argument to specify the text encoding
-# Python 3 only projects can skip this import
-from io import open
+import os
+import io
+import sys
+import contextlib
 
-here = path.abspath(path.dirname(__file__))
+PACKAGES = find_packages()
 
-# Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+# From https://github.com/explosion/spaCy/blob/master/setup.py
+@contextlib.contextmanager
+def chdir(new_dir):
+    old_dir = os.getcwd()
+    try:
+        os.chdir(new_dir)
+        sys.path.insert(0, new_dir)
+        yield
+    finally:
+        del sys.path[0]
+        os.chdir(old_dir)
 
-setup(
-    name='QuickUMLS',
-    version='1.3.0',
-    description='Fast, unsupervised biomedical concept extraction from medical text',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    url='https://github.com/Georgetown-IR-Lab/QuickUMLS',
-    author='Georgetown Information Retrieval Lab',
 
-    classifiers=[
-        'Intended Audience :: Developers',
+def setup_package():
+    root = os.path.abspath(os.path.dirname(__file__))
 
-        'License :: OSI Approved :: MIT License',
-        
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-    ],
+    with open('README.md') as reader:
+        readme = reader.read()
 
-    keywords='nlp umls ner',
+    with open('requirements.txt') as f:
+        requirements = f.read().splitlines()
 
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    
-    # until QuickUMLS is re-factored into directory structure for a package, the individual modules will be listed here:
-    py_modules = ['client', 'constants', 'install', 'network', 'quickumls', 'server', 'toolbox'],
+    dependency_links = []
+    i = 0
+    while i < len(requirements):
+        if requirements[i].startswith('https://'):
+            dependency_links.append(requirements.pop(i))
+        else:
+            i += 1
 
-    # NOTE : For Windows, easiest way to build simstring is with Visual Studio and Anaconda for dependencies
-    install_requires=['simstring'],
 
-    project_urls={
-        'Bug Reports': 'https://github.com/Georgetown-IR-Lab/QuickUMLS/issues',
-        'Source': 'https://github.com/Georgetown-IR-Lab/QuickUMLS',
-    },
-)
+    # From https://github.com/explosion/spaCy/blob/master/setup.py
+    with chdir(root):
+        with io.open(os.path.join(root, "quickumls", "about.py"), encoding="utf8") as f:
+            about = {}
+            exec(f.read(), about)
+
+    setup(
+        name=about['__title__'],
+        version=about['__version__'],
+        description=(
+            'QuickUMLS is a tool for fast, unsupervised biomedical '
+            'concept extraction from medical text'
+        ),
+        packages=PACKAGES,
+        long_description=readme,
+        long_description_content_type='text/markdown',
+        author=about['__author__'],
+        author_email=about['__email__'],
+        url='https://github.com/Georgetown-IR-Lab/QuickUMLS',
+        license=about['__license__'],
+        install_requires=requirements,
+        dependency_links=dependency_links,
+        classifiers=[
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 2",
+            "License :: OSI Approved :: MIT License",
+            "Operating System :: OS Independent",
+            "Development Status :: 5 - Production/Stable",
+            "Topic :: Scientific/Engineering :: Artificial Intelligence",
+            "Topic :: Scientific/Engineering :: Bio-Informatics",
+        ]
+    )
+
+if __name__ == '__main__':
+    setup_package()

@@ -1,22 +1,26 @@
 from __future__ import unicode_literals, division, print_function
 
 # built in modules
+import argparse
+import codecs
 import os
+from six.moves import input
+import shutil
 import sys
 import time
-import codecs
-import shutil
-import argparse
-from six.moves import input
-
-# project modules
-from toolbox import countlines, CuiSemTypesDB, SimstringDBWriter, mkdir
-from constants import HEADERS_MRCONSO, HEADERS_MRSTY, LANGUAGES
-
 try:
     from unidecode import unidecode
 except ImportError:
     pass
+
+
+# third party-dependencies
+import spacy
+
+
+# project modules
+from .toolbox import countlines, CuiSemTypesDB, SimstringDBWriter, mkdir
+from .constants import HEADERS_MRCONSO, HEADERS_MRSTY, LANGUAGES, SPACY_LANGUAGE_MAP
 
 
 def get_semantic_types(path, headers):
@@ -75,7 +79,7 @@ def extract_from_mrconso(
 
         concept_text = content['str'].strip()
         cui = content['cui']
-        preferred = 1 if content['ispref'] else 0
+        preferred = 1 if content['ispref'] == 'Y' else 0
 
         if opts.lowercase:
             concept_text = concept_text.lower()
@@ -98,13 +102,13 @@ def extract_from_mrconso(
     print(status)
 
 
-def parse_and_encode_ngrams(extracted_it, simstring_dir, cuisty_dir):
+def parse_and_encode_ngrams(extracted_it, simstring_dir, cuisty_dir, database_backend):
     # Create destination directories for the two databases
     mkdir(simstring_dir)
     mkdir(cuisty_dir)
 
     ss_db = SimstringDBWriter(simstring_dir)
-    cuisty_db = CuiSemTypesDB(cuisty_dir)
+    cuisty_db = CuiSemTypesDB(cuisty_dir, database_backend=database_backend)
 
     simstring_terms = set()
 
@@ -116,7 +120,56 @@ def parse_and_encode_ngrams(extracted_it, simstring_dir, cuisty_dir):
         cuisty_db.insert(term, cui, stys, preferred)
 
 
-def driver(opts):
+def install_spacy(lang):
+    """Tries to create a spacy object; if it fails, downloads the dataset"""
+
+    print(f'Determining if SpaCy for language "{lang}" is installed...')
+
+    if lang in SPACY_LANGUAGE_MAP:
+        try:
+            spacy.load(SPACY_LANGUAGE_MAP[lang])
+            print(f'SpaCy is installed and avaliable for {lang}!')
+        except OSError:
+            print(f'SpaCy is not available! Attempting to download and install...')
+            spacy.cli.download(SPACY_LANGUAGE_MAP[lang])
+
+
+def parse_args():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        'umls_installation_path',
+        help=('Location of UMLS installation files (`MRCONSO.RRF` and '
+              '`MRSTY.RRF` files)')
+    )
+    ap.add_argument(
+        'destination_path',
+        help='Location where the necessary QuickUMLS files are installed'
+    )
+    ap.add_argument(
+        '-L', '--lowercase', action='store_true',
+        help='Consider only lowercase version of tokens'
+    )
+    ap.add_argument(
+        '-U', '--normalize-unicode', action='store_true',
+        help='Normalize unicode strings to their closest ASCII representation'
+    )
+    ap.add_argument(
+        '-d', '--database-backend', choices=('leveldb', 'unqlite'), default='unqlite',
+        help='KV database to use to store CUIs and semantic types'
+    )
+    ap.add_argument(
+        '-E', '--language', default='ENG', choices=LANGUAGES,
+        help='Extract concepts of the specified language'
+    )
+    opts = ap.parse_args()
+    return opts
+
+
+def main():
+    opts = parse_args()
+
+    install_spacy(opts.language)
+
     if not os.path.exists(opts.destination_path):
         msg = ('Directory "{}" does not exists; should I create it? [y/N] '
                ''.format(opts.destination_path))
@@ -160,6 +213,10 @@ def driver(opts):
     with open(flag_fp, 'w') as f:
         f.write(opts.language)
 
+    flag_fp = os.path.join(opts.destination_path, 'database_backend.flag')
+    with open(flag_fp, 'w') as f:
+        f.write(opts.database_backend)
+
     mrconso_path = os.path.join(opts.umls_installation_path, 'MRCONSO.RRF')
     mrsty_path = os.path.join(opts.umls_installation_path, 'MRSTY.RRF')
 
@@ -168,32 +225,9 @@ def driver(opts):
     simstring_dir = os.path.join(opts.destination_path, 'umls-simstring.db')
     cuisty_dir = os.path.join(opts.destination_path, 'cui-semtypes.db')
 
-    parse_and_encode_ngrams(mrconso_iterator, simstring_dir, cuisty_dir)
+    parse_and_encode_ngrams(mrconso_iterator, simstring_dir, cuisty_dir,
+                            database_backend=opts.database_backend)
 
 
 if __name__ == '__main__':
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
-        'umls_installation_path',
-        help=('Location of UMLS installation files (`MRCONSO.RRF` and '
-              '`MRSTY.RRF` files)')
-    )
-    ap.add_argument(
-        'destination_path',
-        help='Location where the necessary QuickUMLS files are installed'
-    )
-    ap.add_argument(
-        '-L', '--lowercase', action='store_true',
-        help='Consider only lowercase version of tokens'
-    )
-    ap.add_argument(
-        '-U', '--normalize-unicode', action='store_true',
-        help='Normalize unicode strings to their closest ASCII representation'
-    )
-    ap.add_argument(
-        '-E', '--language', default='ENG', choices=LANGUAGES,
-        help='Extract concepts of the specified language'
-    )
-    opts = ap.parse_args()
-
-driver(opts)
+    main()

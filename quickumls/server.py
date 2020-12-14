@@ -1,11 +1,7 @@
-try:
-    from quickumls import QuickUMLS
-    from network import run_server
-except ImportError:
-    from .quickumls import QuickUMLS
-    from .MinimalServer import run_server
-
 from argparse import ArgumentParser
+
+from .core import QuickUMLS
+from .network import run_server
 
 
 def run_quickumls_server(opts):
@@ -16,13 +12,14 @@ def run_quickumls_server(opts):
         similarity_name=opts.similarity_name,
         window=opts.window,
         min_match_length=opts.min_match_length,
-        verbose=opts.verbose
+        verbose=opts.verbose,
+        keep_uppercase=opts.keep_uppercase
     )
 
     run_server(matcher, host=opts.host, port=opts.port, buffersize=4096)
 
 
-if __name__ == '__main__':
+def parse_args():
     ap = ArgumentParser(
         prog='QuickUMLS server',
         description=(
@@ -75,6 +72,20 @@ if __name__ == '__main__':
         '-v', '--verbose', action='store_true',
         help='return verbose information while running'
     )
+    ap.add_argument(
+        '-u', '--keep_uppercase', action='store_true',
+        help='By default QuickUMLS converts all uppercase strings to lowercase'
+             '. This option disables that functionality, which makes QuickUMLS '
+             'useful for distinguishing acronyms from normal words. For this '
+             'the database should be installed without the -L option.'
+    )
+    return ap.parse_args()
 
-    opts = ap.parse_args()
+
+def main():
+    opts = parse_args()
     run_quickumls_server(opts)
+
+
+if __name__ == '__main__':
+    main()

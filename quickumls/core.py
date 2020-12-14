@@ -14,21 +14,50 @@ import nltk
 from unidecode import unidecode
 
 # project modules
-try:
-    import toolbox
-    import constants
-except ImportError:
-    from . import toolbox
-    from . import constants
+from . import toolbox
+from . import constants
 
 
 class QuickUMLS(object):
+    """The main class to interact with the matcher.
+    """
     def __init__(
             self, quickumls_fp,
             overlapping_criteria='score', threshold=0.7, window=5,
             similarity_name='jaccard', min_match_length=3,
             accepted_semtypes=constants.ACCEPTED_SEMTYPES,
-            verbose=False):
+            verbose=False, keep_uppercase=False,
+            spacy_component = False):
+        """Instantiate QuickUMLS object
+
+            This is the main interface through which text can be processed.
+
+        Args:
+            quickumls_fp (str): Path to which QuickUMLS was installed
+            overlapping_criteria (str, optional):
+                    One of "score" or "length". Choose how results are ranked.
+                    Choose "score" for best matching score first or "length" for longest match first.. Defaults to 'score'.
+            threshold (float, optional): Minimum similarity between strings. Defaults to 0.7.
+            window (int, optional): Maximum amount of tokens to consider for matching. Defaults to 5.
+            similarity_name (str, optional): One of "dice", "jaccard", "cosine", or "overlap".
+                    Similarity measure to be used. Defaults to 'jaccard'.
+            min_match_length (int, optional): TODO: ??. Defaults to 3.
+            accepted_semtypes (List[str], optional): Set of UMLS semantic types concepts should belong to.
+                Semantic types are identified by the letter "T" followed by three numbers
+                (e.g., "T131", which identifies the type "Hazardous or Poisonous Substance").
+                Defaults to constants.ACCEPTED_SEMTYPES.
+            verbose (bool, optional): TODO:??. Defaults to False.
+            keep_uppercase (bool, optional): By default QuickUMLS converts all
+                    uppercase strings to lowercase. This option disables that
+                    functionality, which makes QuickUMLS useful for
+                    distinguishing acronyms from normal words. For this the
+                    database should be installed without the -L option.
+                    Defaults to False.
+
+        Raises:
+            ValueError: Raises a ValueError if QuickUMLS was installed for a language that is not currently supported TODO: verify this?
+            OSError: Raises an OSError if the required Spacy model was not installed.
+        """
 
         self.verbose = verbose
 
@@ -64,6 +93,14 @@ class QuickUMLS(object):
         self.normalize_unicode_flag = os.path.exists(
             os.path.join(quickumls_fp, 'normalize-unicode.flag')
         )
+        self.keep_uppercase = keep_uppercase
+
+        # Check whether data is installed with lowercase flag and QuickUMLS initiated with keeping uppercase words
+        if self.to_lowercase_flag and self.keep_uppercase:
+            raise ValueError('Database is installed with lowercase flag and QuickUMLS is initiated with '
+                             'keep_uppercase flag. This would prevent identifying concepts that contain all uppercase'
+                             'characters. Please reinstall data without --lowercase or run QuickUMLS without'
+                             '--keep_uppercase.')
 
         language_fp = os.path.join(quickumls_fp, 'language.flag')
 
@@ -90,6 +127,19 @@ class QuickUMLS(object):
             )
             spacy_lang = constants.SPACY_LANGUAGE_MAP[self.language_flag]
 
+        database_backend_fp = os.path.join(quickumls_fp, 'database_backend.flag')
+        if os.path.exists(database_backend_fp):
+            with open(database_backend_fp) as f:
+                self._database_backend = f.read().strip()
+        else:
+            print('[WARNING] This installation was created with QuickUMLS v.1.3 or earlier, '
+                  'which does not support multiple database backends. For now, I\'ll '
+                  'assume that leveldb was used as default, implicit assumption will '
+                  'change in future versions of QuickUMLS. More info here: '
+                  'https://github.com/Georgetown-IR-Lab/QuickUMLS/wiki/Migration-QuickUMLS-1.3-to-1.4',
+                  file=sys.stderr)
+            self._database_backend = 'leveldb'
+
         # domain specific stopwords
         self._stopwords = self._stopwords.union(constants.DOMAIN_SPECIFIC_STOPWORDS)
 
@@ -97,24 +147,37 @@ class QuickUMLS(object):
 
         self.accepted_semtypes = accepted_semtypes
 
+        # if this is not being executed as as spacy component, then it must be standalone
+        if spacy_component:
+            # In this case, the pipeline is external to this current class
+            self.nlp = None
+        else:
+            try:
+                self.nlp = spacy.load(spacy_lang)
+            except OSError:
+                msg = (
+                    'Model for language "{}" is not downloaded. Please '
+                    'run "python -m spacy download {}" before launching '
+                    'QuickUMLS'
+                ).format(
+                    self.language_flag,
+                    constants.SPACY_LANGUAGE_MAP.get(self.language_flag, 'xx')
+                )
+                raise OSError(msg)
+
         self.ss_db = toolbox.SimstringDBReader(
             simstring_fp, similarity_name, threshold
         )
-        self.cuisem_db = toolbox.CuiSemTypesDB(cuisem_fp)
-        try:
-            self.nlp = spacy.load(spacy_lang)
-        except OSError:
-            msg = (
-                'Model for language "{}" is not downloaded. Please '
-                'run "python -m spacy download {}" before launching '
-                'QuickUMLS'
-            ).format(
-                self.language_flag,
-                constants.SPACY_LANGUAGE_MAP.get(self.language_flag, 'xx')
-            )
-            raise OSError(msg)
+        self.cuisem_db = toolbox.CuiSemTypesDB(
+            cuisem_fp, database_backend=self._database_backend
+        )
 
     def get_info(self):
+        """Computes a summary of the matcher options.
+
+        Returns:
+            Dict: Dictionary containing information on the QuicUMLS instance.
+        """
         return self.info
 
     def get_accepted_semtypes(self):
@@ -122,6 +185,11 @@ class QuickUMLS(object):
 
     @property
     def info(self):
+        """Computes a summary of the matcher options.
+
+        Returns:
+            Dict: Dictionary containing information on the QuicUMLS instance.
+        """
         # useful for caching of respnses
 
         if self._info is None:
@@ -179,10 +247,10 @@ class QuickUMLS(object):
     def _make_ngrams(self, sent):
         sent_length = len(sent)
 
-        # do not include teterminers inside a span
+        # do not include determiners inside a span
         skip_in_span = {token.i for token in sent if token.pos_ == 'DET'}
 
-        # invalidate a span if it includes any on these  symbols
+        # invalidate a span if it includes any on these symbols
         invalid_mid_tokens = {
             token.i for token in sent if not self._is_valid_middle_token(token)
         }
@@ -245,11 +313,11 @@ class QuickUMLS(object):
             if self.to_lowercase_flag:
                 ngram_normalized = ngram_normalized.lower()
 
-            # if the term is all uppercase, it might be the case that
+            # If the term is all uppercase, it might be the case that
             # no match is found; so we convert to lowercase;
             # however, this is never needed if the string is lowercased
             # in the step above
-            if not self.to_lowercase_flag and ngram_normalized.isupper():
+            if not self.to_lowercase_flag and ngram_normalized.isupper() and not self.keep_uppercase:
                 ngram_normalized = ngram_normalized.lower()
 
             prev_cui = None
@@ -260,15 +328,17 @@ class QuickUMLS(object):
             for match in ngram_cands:
                 cuisem_match = sorted(self.cuisem_db.get(match))
 
-                for cui, semtypes, preferred in cuisem_match:
-                    match_similarity = toolbox.get_similarity(
-                        x=ngram_normalized,
-                        y=match,
-                        n=self.ngram_length,
-                        similarity_name=self.similarity_name
-                    )
-                    if match_similarity == 0:
+                match_similarity = toolbox.get_similarity(
+                    x=ngram_normalized,
+                    y=match,
+                    n=self.ngram_length,
+                    similarity_name=self.similarity_name
+                )
+
+                if match_similarity == 0:
                         continue
+
+                for cui, semtypes, preferred in cuisem_match:
 
                     if not self._is_ok_semtype(semtypes):
                         continue
@@ -336,10 +406,10 @@ class QuickUMLS(object):
             for j in xrange(
                     i + 1, min(i + self.window, len(parsed)) + 1):
                 span = parsed[i:j]
-                
+
                 if not self._is_longer_than_min(span):
                     continue
-                
+
                 yield (span.start_char, span.end_char, span.text)
 
     def _print_verbose_status(self, parsed, matches):
@@ -357,18 +427,55 @@ class QuickUMLS(object):
         return True
 
     def match(self, text, best_match=True, ignore_syntax=False):
-        parsed = self.nlp(u'{}'.format(text))
+        """Perform UMLS concept resolution for the given string.
 
+        [extended_summary]
+
+        Args:
+            text (str): Text on which to run the algorithm
+
+            best_match (bool, optional): Whether to return only the top match or all overlapping candidates. Defaults to True.
+            ignore_syntax (bool, optional): Wether to use the heuristcs introduced in the paper (Soldaini and Goharian, 2016). TODO: clarify,. Defaults to False.
+
+        Returns:
+            List: List of all matches in the text
+            TODO: Describe format
+        """
+
+        parsed = self.nlp(u'{}'.format(text))
+        
+        # pass in parsed spacy doc to get concept matches
+        matches = self._match(parsed)
+
+        return matches
+        
+    def _match(self, doc, best_match=True, ignore_syntax=False):
+        """Gathers ngram matches given a spaCy document object.
+
+        [extended_summary]
+
+        Args:
+            text (Document): spaCy Document object to be used for extracting ngrams
+
+            best_match (bool, optional): Whether to return only the top match or all overlapping candidates. Defaults to True.
+            ignore_syntax (bool, optional): Wether to use the heuristcs introduced in the paper (Soldaini and Goharian, 2016). TODO: clarify,. Defaults to False
+
+        Returns:
+            List: List of all matches in the text
+            TODO: Describe format
+        """
+        
+        ngrams = None
         if ignore_syntax:
-            ngrams = self._make_token_sequences(parsed)
+            ngrams = self._make_token_sequences(doc)
         else:
-            ngrams = self._make_ngrams(parsed)
+            ngrams = self._make_ngrams(doc)
 
         matches = self._get_all_matches(ngrams)
 
         if best_match:
             matches = self._select_terms(matches)
 
-        self._print_verbose_status(parsed, matches)
-
+        self._print_verbose_status(doc, matches)
+        
         return matches
