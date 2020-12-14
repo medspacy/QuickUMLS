@@ -20,7 +20,7 @@ except ImportError:
     UNQLITE_AVAILABLE = False
 
 # project imports
-from quickumls_simstring import simstring
+import simstring
 
 
 # Python version specific imports
