@@ -31,8 +31,8 @@ class SpacyQuickUMLS(object):
         self.verbose = verbose
 
         # let's extend this with some proprties that we want
-        Span.set_extension('similarity', default = -1.0)
-        Span.set_extension('semtypes', default = -1.0)
+        Span.set_extension('similarity', default = -1.0, force = True)
+        Span.set_extension('semtypes', default = -1.0, force = True)
         
         if self.verbose:
             print('Accepted semtypes : [{0}]'.format(accepted_semtypes))
