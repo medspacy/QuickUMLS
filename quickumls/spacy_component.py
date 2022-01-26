@@ -37,8 +37,10 @@ class SpacyQuickUMLS(object):
         self.ignore_syntax = ignore_syntax
 
         # let's extend this with some proprties that we want
-        Span.set_extension('similarity', default = -1.0)
-        Span.set_extension('semtypes', default = -1.0)
+        if not Span.has_extension("similarity"):
+            Span.set_extension('similarity', default = -1.0)
+        if not Span.has_extension("semtypes"): 
+            Span.set_extension('semtypes', default = -1.0)
         
     def __call__(self, doc):
         # pass in the document which has been parsed to this point in the pipeline for ngrams and matches
