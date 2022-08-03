@@ -323,8 +323,7 @@ class QuickUMLS(object):
             prev_cui = None
             ngram_cands = list(self.ss_db.get(ngram_normalized))
 
-            ngram_matches = []
-
+            ngram_dict = {}
             for match in ngram_cands:
                 cuisem_match = sorted(self.cuisem_db.get(match))
 
@@ -343,16 +342,21 @@ class QuickUMLS(object):
                     if not self._is_ok_semtype(semtypes):
                         continue
 
-                    if prev_cui is not None and prev_cui == cui:
-                        if match_similarity > ngram_matches[-1]['similarity']:
-                            ngram_matches.pop(-1)
-                        else:
-                            continue
-
-                    prev_cui = cui
-
-                    ngram_matches.append(
-                        {
+                    # if cui is already in the dictionary, replace only if the new score is higher
+                    if cui in ngram_dict.keys():
+                        if match_similarity > ngram_dict[cui]['similarity']:
+                            ngram_dict[cui] = {
+                                'start': start,
+                                'end': end,
+                                'ngram': ngram,
+                                'term': toolbox.safe_unicode(match),
+                                'cui': cui,
+                                'similarity': match_similarity,
+                                'semtypes': semtypes,
+                                'preferred': preferred
+                            }
+                    else: # otherwise just add it if it is not part of the dictionary
+                        ngram_dict[cui] = {
                             'start': start,
                             'end': end,
                             'ngram': ngram,
@@ -362,8 +366,8 @@ class QuickUMLS(object):
                             'semtypes': semtypes,
                             'preferred': preferred
                         }
-                    )
 
+            ngram_matches = ngram_dict.values()
             if len(ngram_matches) > 0:
                 matches.append(
                     sorted(
