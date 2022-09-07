@@ -1,14 +1,28 @@
+from sys import platform
+from os import path
+from pathlib import Path
+
 import spacy
 from spacy.tokens import Span
 from spacy.strings import StringStore
+from spacy.language import Language
 
 from .core import QuickUMLS
 from . import constants
 
+@Language.factory("medspacy_quickumls")
 class SpacyQuickUMLS(object):
-    name = 'QuickUMLS matcher'
-    
-    def __init__(self, nlp, quickumls_fp, best_match=True, ignore_syntax=False, **kwargs):
+
+    def __init__(self, nlp, name = "medspacy_quickumls", quickumls_fp=None,
+                 overlapping_criteria='score',
+                 threshold=0.7,
+                 window=5,
+                 similarity_name='jaccard',
+                 min_match_length=3,
+                 accepted_semtypes=constants.ACCEPTED_SEMTYPES,
+                 verbose=False,
+                 keep_uppercase=False,
+                 best_match=True, ignore_syntax=False):
         """Instantiate SpacyQuickUMLS object
 
             This creates a QuickUMLS spaCy component which can be used in modular pipelines.  
@@ -18,23 +32,66 @@ class SpacyQuickUMLS(object):
         Args:
             nlp: Existing spaCy pipeline.  This is needed to update the vocabulary with UMLS CUI values
             quickumls_fp (str): Path to QuickUMLS data
+            overlapping_criteria (str, optional):
+                    One of "score" or "length". Choose how results are ranked.
+                    Choose "score" for best matching score first or "length" for longest match first.. Defaults to 'score'.
+            threshold (float, optional): Minimum similarity between strings. Defaults to 0.7.
+            window (int, optional): Maximum amount of tokens to consider for matching. Defaults to 5.
+            similarity_name (str, optional): One of "dice", "jaccard", "cosine", or "overlap".
+                    Similarity measure to be used. Defaults to 'jaccard'.
+            min_match_length (int, optional): TODO: ??. Defaults to 3.
+            accepted_semtypes (List[str], optional): Set of UMLS semantic types concepts should belong to.
+                Semantic types are identified by the letter "T" followed by three numbers
+                (e.g., "T131", which identifies the type "Hazardous or Poisonous Substance").
+                Defaults to constants.ACCEPTED_SEMTYPES.
+            verbose (bool, optional): TODO:??. Defaults to False.
+            keep_uppercase (bool, optional): By default QuickUMLS converts all
+                    uppercase strings to lowercase. This option disables that
+                    functionality, which makes QuickUMLS useful for
+                    distinguishing acronyms from normal words. For this the
+                    database should be installed without the -L option.
+                    Defaults to False.
             best_match (bool, optional): Whether to return only the top match or all overlapping candidates. Defaults to True.
             ignore_syntax (bool, optional): Whether to use the heuristcs introduced in the paper (Soldaini and Goharian, 2016). TODO: clarify,. Defaults to False
             **kwargs: QuickUMLS keyword arguments (see QuickUMLS in core.py)
         """
+
+        if quickumls_fp is None:
+            # let's use a default sample that we provide in medspacy
+            # NOTE: Currently QuickUMLS uses an older fork of simstring where databases
+            # cannot be shared between Windows and POSIX systems so we distribute the sample for both:
+
+            quickumls_platform_dir = "QuickUMLS_SAMPLE_lowercase_POSIX_unqlite"
+            if platform.startswith("win"):
+                quickumls_platform_dir = "QuickUMLS_SAMPLE_lowercase_Windows_unqlite"
+
+            quickumls_fp = path.join(
+                Path(__file__).resolve().parents[1], "resources", "quickumls/{0}".format(quickumls_platform_dir)
+            )
+            print("Loading QuickUMLS resources from a default SAMPLE of UMLS data from here: {}".format(quickumls_fp))
         
         self.quickumls = QuickUMLS(quickumls_fp, 
             # By default, the QuickUMLS objects creates its own internal spacy pipeline but this is not needed
             # when we're using it as a component in a pipeline
             spacy_component = True,
-            **kwargs)
+            overlapping_criteria=overlapping_criteria,
+            threshold=threshold,
+            window=window,
+            similarity_name=similarity_name,
+            min_match_length=min_match_length,
+            accepted_semtypes=accepted_semtypes,
+            verbose=verbose,
+            keep_uppercase=keep_uppercase
+            )
         
         # save this off so that we can get vocab values of labels later
         self.nlp = nlp
+        self.name = name
         
         # keep these for matching
         self.best_match = best_match
         self.ignore_syntax = ignore_syntax
+        self.verbose = verbose
 
         # let's extend this with some proprties that we want
         if not Span.has_extension("similarity"):
