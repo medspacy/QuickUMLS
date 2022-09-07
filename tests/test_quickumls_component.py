@@ -54,7 +54,6 @@ class TestQuickUMLSComponent:
 
         nlp.add_pipe("medspacy_quickumls")
 
-        # TODO -- Consider moving this and other extraction tests to separate tests from loading
         doc = nlp("Decreased dipalmitoyllecithin content found in lung specimens")
 
         assert len(doc.ents) == 1
@@ -62,3 +61,29 @@ class TestQuickUMLSComponent:
         entity_spans = [ent.text for ent in doc.ents]
 
         assert "dipalmitoyllecithin" in entity_spans
+
+    def test_min_similarity_threshold(self):
+        """
+        Test that an extraction is NOT made if we set our matching to be perfect matching (100% similarity)
+        and we have a typo
+        """
+
+        # let's make sure that this pipe has been initialized
+        # At least for MacOS and Linux which are currently supported...
+        if not TestQuickUMLSComponent.can_test_quickumls():
+            return
+
+        # allow default QuickUMLS (very small sample data) to be loaded
+        nlp = spacy.blank("en")
+
+        nlp.add_pipe("medspacy_quickumls", config={"threshold": 1.0})
+
+        concept_term = "dipalmitoyllecithin"
+        # Let's turn this into a typo which will no longer match...
+        concept_term += 'n'
+
+        text = "Decreased {} content found in lung specimens".format(concept_term)
+
+        doc = nlp(text)
+
+        assert len(doc.ents) == 0
