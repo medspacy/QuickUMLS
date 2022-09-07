@@ -1,6 +1,6 @@
 [NOTE: This is an updated fork of QuickUMLS for usage in medspacy to accelerate recent developments from the medspacy team to incorporate QuickUMLS into spacy pipelines.]
 
-[**NEW: v.1.4 supports starting multiple QuickUMLS matchers concurrently!**](https://giphy.com/embed/BlVnrxJgTGsUw) I've finally added support for [unqlite](https://github.com/coleifer/unqlite-python) as an alternative to leveldb for storage of CUIs and Semantic Types (see [here](https://github.com/Georgetown-IR-Lab/QuickUMLS/wiki/Migration-QuickUMLS-1.3-to-1.4) for more details). unqlite-backed QuickUMLS installation support multiple matchers running at the same time. Other than better multi-processing support, unqlite should have better support for unicode.
+[**NEW: v.1.4 supports starting multiple QuickUMLS matchers concurrently!**](https://giphy.com/embed/BlVnrxJgTGsUw) I've finally added support for [unqlite](https://github.com/coleifer/unqlite-python) as an alternative database for storage of CUIs and Semantic Types (see [here](https://github.com/Georgetown-IR-Lab/QuickUMLS/wiki/Migration-QuickUMLS-1.3-to-1.4) for more details). unqlite-backed QuickUMLS installation support multiple matchers running at the same time. Other than better multi-processing support, unqlite should have better support for unicode.
 
 # QuickUMLS
 
@@ -18,10 +18,8 @@ This project should be compatible with Python 3 (Python 2 is [no longer supporte
     - `-L` / `--lowercase`: if used, all concept terms are folded to lowercase before being processed. This option typically increases recall, but it might reduce precision;
     - `-U` / `--normalize-unicode`: if used, expressions with non-ASCII characters are converted to the closest combination of ASCII characters.
     - `-E` / `--language`: Specify the language to consider for UMLS concepts; by default, English is used. For a complete list of languages, please see [this table provided by NLM](https://www.nlm.nih.gov/research/umls/knowledge_sources/metathesaurus/release/abbreviations.html#LAT).
-    - `-d` / `--database-backend`: Specify which database backend to use for QuickUMLS. The two options are `leveldb` and `unqlite`. The latter supports multi-process reading and has better unicode compatibility, and it used as default for all new 1.4 installations; the former is still used as default when instantiating a QuickUMLS client. More info about differences between the two databases and migration info are available [here](https://github.com/Georgetown-IR-Lab/QuickUMLS/wiki/Migration-QuickUMLS-1.3-to-1.4).
+    - `-d` / `--database-backend`: Specify which database backend to use for QuickUMLS. The current option is `unqlite`, but it may be expanded in the future. This backend supports multi-process reading and has better unicode compatibility, and it used as default.
 
-
-**†**: If the installation fails on macOS when using Anaconda, install `leveldb` first by running `conda install -c conda-forge python-leveldb`.
 
 ## APIs
 

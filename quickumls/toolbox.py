@@ -12,7 +12,7 @@ from six.moves import xrange
 
 # installed modules
 import numpy
-import leveldb
+
 try:
     import unqlite
     UNQLITE_AVAILABLE = True
@@ -222,7 +222,7 @@ class Intervals(object):
 
 
 class CuiSemTypesDB(object):
-    def __init__(self, path, database_backend='leveldb'):
+    def __init__(self, path, database_backend='unqlite'):
         if not (os.path.exists(path) or os.path.isdir(path)):
             err_msg = (
                 '"{}" is not a valid directory').format(path)
@@ -240,12 +240,7 @@ class CuiSemTypesDB(object):
             self.semtypes_db_put = self.semtypes_db.store
             self.semtypes_db_get = self.semtypes_db.fetch
         elif database_backend == 'leveldb':
-            self.cui_db = leveldb.LevelDB(os.path.join(path, 'cui.leveldb'))
-            self.cui_db_put = self.cui_db.Put
-            self.cui_db_get = self.cui_db.Get
-            self.semtypes_db = leveldb.LevelDB(os.path.join(path, 'semtypes.leveldb'))
-            self.semtypes_db_put = self.semtypes_db.Put
-            self.semtypes_db_get = self.semtypes_db.Get
+            raise ValueError(f'database_backend {database_backend} is no longer supported')
         else:
             raise ValueError(f'database_backend {database_backend} not recognized')
 
