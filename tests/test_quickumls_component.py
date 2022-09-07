@@ -9,8 +9,11 @@ class TestQuickUMLSComponent:
     @staticmethod
     def can_test_quickumls():
         if platform.startswith("win"):
-            # we're done here for now...
-            return False
+            try:
+                import quickumls_simstring
+            except:
+                # we're done here for now...
+                return False
 
         return True
 
