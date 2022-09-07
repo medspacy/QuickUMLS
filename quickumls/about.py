@@ -4,7 +4,7 @@
 # https://github.com/explosion/spaCy/blob/master/spacy/about.py
 
 __title__ = 'medspacy_quickumls'
-__version__ = '2.4'
+__version__ = '2.5'
 __author__ = 'Luca Soldaini, modified by Kelly Peterson'
 __email__ = 'luca@ir.cs.georgetown.edu,kelly.peterson@hsc.utah.edu'
 __license__ = 'MIT'
