@@ -33,8 +33,10 @@ class SpacyQuickUMLS(object):
         """Instantiate SpacyQuickUMLS object
 
             This creates a QuickUMLS spaCy component which can be used in modular pipelines.  
-            This module adds entity Spans to the document where the entity label is the UMLS CUI and the Span's "underscore" object is extended to contains "similarity" and "semtypes" for matched concepts.
-            Note that this implementation follows and enforces a known spacy convention that entity Spans cannot overlap on a single token.
+            This module adds either entity Spans (default) or Span Groups to the document where the  label is the UMLS CUI and the Span's
+                "underscore" object is extended to contain additional information about matched concepts.
+            Note that this implementation follows and enforces a known spacy convention on entities
+                that entity Spans cannot overlap on a single token.  If SpanGroups are selected instead, they may overlap
 
         Args:
             nlp: Existing spaCy pipeline.  This is needed to update the vocabulary with UMLS CUI values
