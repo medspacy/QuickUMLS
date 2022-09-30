@@ -4,6 +4,7 @@ from sys import platform
 import pytest
 
 from quickumls import spacy_component
+from quickumls.constants import MEDSPACY_DEFAULT_SPAN_GROUP_NAME
 
 class TestQuickUMLSComponent:
     @staticmethod
@@ -119,3 +120,63 @@ class TestQuickUMLSComponent:
         match_object = list(ent._.umls_matches)[0]
 
         assert match_object.cui.startswith("C")
+
+    def test_span_groups(self):
+        """
+        Test that an extraction has UmlsMatch objects for it
+        """
+
+        # let's make sure that this pipe has been initialized
+        # At least for MacOS and Linux which are currently supported...
+        if not TestQuickUMLSComponent.can_test_quickumls():
+            return
+
+        # allow default QuickUMLS (very small sample data) to be loaded
+        nlp = spacy.blank("en")
+
+        nlp.add_pipe("medspacy_quickumls", config={"threshold": 1.0, "result_type": "group"})
+
+        concept_term = "dipalmitoyllecithin"
+
+        text = "Decreased {} content found in lung specimens".format(concept_term)
+
+        doc = nlp(text)
+
+        assert len(doc.ents) == 0
+
+        assert len(doc.spans[MEDSPACY_DEFAULT_SPAN_GROUP_NAME]) == 1
+
+        span = doc.spans[MEDSPACY_DEFAULT_SPAN_GROUP_NAME][0]
+
+        assert len(span._.umls_matches) > 0
+
+    def test_custom_span_group_name(self):
+        """
+        Test that an extraction has UmlsMatch objects for it
+        """
+
+        # let's make sure that this pipe has been initialized
+        # At least for MacOS and Linux which are currently supported...
+        if not TestQuickUMLSComponent.can_test_quickumls():
+            return
+
+        # allow default QuickUMLS (very small sample data) to be loaded
+        nlp = spacy.blank("en")
+
+        custom_span_group_name = "my_own_span_group"
+
+        nlp.add_pipe("medspacy_quickumls", config={"threshold": 1.0,
+                                                   "result_type": "group",
+                                                   "span_group_name": custom_span_group_name})
+
+        concept_term = "dipalmitoyllecithin"
+
+        text = "Decreased {} content found in lung specimens".format(concept_term)
+
+        doc = nlp(text)
+
+        assert len(doc.ents) == 0
+
+        assert MEDSPACY_DEFAULT_SPAN_GROUP_NAME not in doc.spans or len(doc.spans[MEDSPACY_DEFAULT_SPAN_GROUP_NAME]) == 0
+
+        assert len(doc.spans[custom_span_group_name]) == 1
