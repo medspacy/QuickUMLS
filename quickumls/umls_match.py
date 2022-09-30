@@ -1,12 +1,11 @@
-from typing import List
+from typing import Set
 
 
 class UmlsMatch:
 
     def __init__(self,
                  cui: str,
-                 semtypes: List[str],
-                 preferred: str,
+                 semtypes: Set[str],
                  similarity: float):
         """Instantiate UmlsMatch object
 
@@ -16,12 +15,10 @@ class UmlsMatch:
 
                 Args:
                     cui: UMLS controlled unique identifier (CUI) value (e.g., "C0243095")
-                    semtypes (List[str]): List of UMLS semantic types as Type Unique Identifier values (TUI)
+                    semtypes (Set[str]): List of UMLS semantic types as Type Unique Identifier values (TUI)
                             for this matched concept (e.g., "T203")
-                    preferred (str): Preferred term for this match
                     similarity (float): Similarity score between match and UMLS concept
                 """
         self.cui = cui
         self.semtypes = semtypes
-        self.preferred = preferred
         self.similarity = similarity

@@ -152,7 +152,6 @@ class SpacyQuickUMLS(object):
                 # let's create this more fully featured match object
                 umls_match = UmlsMatch(cui,
                                        ngram_match_dict['semtypes'],
-                                       ngram_match_dict['preferred'],
                                        ngram_match_dict['similarity'])
 
                 span._.umls_matches.add(umls_match)
