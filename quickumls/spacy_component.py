@@ -9,6 +9,7 @@ from spacy.language import Language
 
 from .core import QuickUMLS
 from . import constants
+from .umls_match import UmlsMatch
 
 @Language.factory("medspacy_quickumls")
 class SpacyQuickUMLS(object):
@@ -98,6 +99,11 @@ class SpacyQuickUMLS(object):
             Span.set_extension('similarity', default = -1.0)
         if not Span.has_extension("semtypes"): 
             Span.set_extension('semtypes', default = -1.0)
+
+        # match objects are a set, since span objects with the same start/end keys
+        # would have the same values for custom attributes in spacy
+        if not Span.has_extension("umls_matches"):
+            Span.set_extension('umls_matches', default=set())
         
     def __call__(self, doc):
         # pass in the document which has been parsed to this point in the pipeline for ngrams and matches
@@ -142,6 +148,15 @@ class SpacyQuickUMLS(object):
                 # add some custom metadata to the spans
                 span._.similarity = ngram_match_dict['similarity']
                 span._.semtypes = ngram_match_dict['semtypes']
+
+                # let's create this more fully featured match object
+                umls_match = UmlsMatch(cui,
+                                       ngram_match_dict['semtypes'],
+                                       ngram_match_dict['preferred'],
+                                       ngram_match_dict['similarity'])
+
+                span._.umls_matches.add(umls_match)
+
                 doc.ents = list(doc.ents) + [span]
                 
         return doc
