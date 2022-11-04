@@ -132,13 +132,9 @@ class QuickUMLS(object):
             with open(database_backend_fp) as f:
                 self._database_backend = f.read().strip()
         else:
-            print('[WARNING] This installation was created with QuickUMLS v.1.3 or earlier, '
-                  'which does not support multiple database backends. For now, I\'ll '
-                  'assume that leveldb was used as default, implicit assumption will '
-                  'change in future versions of QuickUMLS. More info here: '
-                  'https://github.com/Georgetown-IR-Lab/QuickUMLS/wiki/Migration-QuickUMLS-1.3-to-1.4',
-                  file=sys.stderr)
-            self._database_backend = 'leveldb'
+            raise ValueError("""File database_backend.flag was not found at this location: {}.  This path may have been created with leveldb
+                             or an earlier version of QuickUMLS, but leveldb is not supported by this package version
+                             """.format(quickumls_fp))
 
         # domain specific stopwords
         self._stopwords = self._stopwords.union(constants.DOMAIN_SPECIFIC_STOPWORDS)
@@ -323,8 +319,7 @@ class QuickUMLS(object):
             prev_cui = None
             ngram_cands = list(self.ss_db.get(ngram_normalized))
 
-            ngram_matches = []
-
+            ngram_dict = {}
             for match in ngram_cands:
                 cuisem_match = sorted(self.cuisem_db.get(match))
 
@@ -343,16 +338,21 @@ class QuickUMLS(object):
                     if not self._is_ok_semtype(semtypes):
                         continue
 
-                    if prev_cui is not None and prev_cui == cui:
-                        if match_similarity > ngram_matches[-1]['similarity']:
-                            ngram_matches.pop(-1)
-                        else:
-                            continue
-
-                    prev_cui = cui
-
-                    ngram_matches.append(
-                        {
+                    # if cui is already in the dictionary, replace only if the new score is higher
+                    if cui in ngram_dict.keys():
+                        if match_similarity > ngram_dict[cui]['similarity']:
+                            ngram_dict[cui] = {
+                                'start': start,
+                                'end': end,
+                                'ngram': ngram,
+                                'term': toolbox.safe_unicode(match),
+                                'cui': cui,
+                                'similarity': match_similarity,
+                                'semtypes': semtypes,
+                                'preferred': preferred
+                            }
+                    else: # otherwise just add it if it is not part of the dictionary
+                        ngram_dict[cui] = {
                             'start': start,
                             'end': end,
                             'ngram': ngram,
@@ -362,8 +362,8 @@ class QuickUMLS(object):
                             'semtypes': semtypes,
                             'preferred': preferred
                         }
-                    )
 
+            ngram_matches = ngram_dict.values()
             if len(ngram_matches) > 0:
                 matches.append(
                     sorted(
