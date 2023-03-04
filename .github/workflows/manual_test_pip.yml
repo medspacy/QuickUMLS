@@ -33,6 +33,7 @@ jobs:
     - run: |
         python --version
         pip install --upgrade pip
+        pip install --use-pep517 unqlite
         pip install --pre medspacy_quickumls
 
     - name: Test with pytest
