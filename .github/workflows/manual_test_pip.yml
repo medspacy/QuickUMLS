@@ -22,7 +22,7 @@ jobs:
       run: |
         pwd
         ls
-        python -c "import shutil;shutil.rmtree('medspacy')"
+        python -c "import shutil;shutil.rmtree('quickumls')"
         ls
 
     - name: Set up Python ${{ matrix.python-version }}  ${{ matrix.os }}
