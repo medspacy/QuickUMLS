@@ -67,7 +67,8 @@ def setup_package():
             "Development Status :: 5 - Production/Stable",
             "Topic :: Scientific/Engineering :: Artificial Intelligence",
             "Topic :: Scientific/Engineering :: Bio-Informatics",
-        ]
+        ],
+        package_data={'': ['../resources/*/*.*']},
     )
 
 if __name__ == '__main__':
