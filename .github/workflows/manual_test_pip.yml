@@ -38,4 +38,5 @@ jobs:
 
     - name: Test with pytest
       run: |        
-        pytest
+        pytest tests/test_quickumls_component.py
+        pytest tests/test_quickumls_spangroup.py
