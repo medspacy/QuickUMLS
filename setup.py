@@ -51,6 +51,7 @@ def setup_package():
             'concept extraction from medical text'
         ),
         packages=PACKAGES,
+        include_package_data=True,
         long_description=readme,
         long_description_content_type='text/markdown',
         author=about['__author__'],
@@ -67,7 +68,8 @@ def setup_package():
             "Development Status :: 5 - Production/Stable",
             "Topic :: Scientific/Engineering :: Artificial Intelligence",
             "Topic :: Scientific/Engineering :: Bio-Informatics",
-        ]
+        ],
+        package_data={'': ['../resources/*/*', '../resources/*/*/*', '../resources/*/*/*/*']},
     )
 
 if __name__ == '__main__':
