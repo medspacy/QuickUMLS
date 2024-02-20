@@ -283,7 +283,7 @@ class CuiSemTypesDB(object):
         matches = (
             (
                 cui,
-                pickle.loads(self.semtypes_db_get(db_key_encode(cui))),
+                list(pickle.loads(self.semtypes_db_get(db_key_encode(cui)))),
                 is_preferred
             )
             for cui, is_preferred in cuis
