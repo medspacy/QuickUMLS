@@ -39,7 +39,7 @@ def get_mrconso_iterator(path, headers, lang='ENG'):
         for i, ln in enumerate(f):
             content = dict(zip(headers, ln.strip().split('|')))
 
-            if content['lat'] != lang:
+            if content.get('lat', None) != lang:
                 continue
 
             yield content
@@ -47,7 +47,8 @@ def get_mrconso_iterator(path, headers, lang='ENG'):
 
 def extract_from_mrconso(
         mrconso_path, mrsty_path, opts,
-        mrconso_header=HEADERS_MRCONSO, mrsty_header=HEADERS_MRSTY):
+        mrconso_header=HEADERS_MRCONSO, mrsty_header=HEADERS_MRSTY,
+        cui_whitelist=None):
 
     start = time.time()
     print('loading semantic types...', end=' ')
@@ -80,6 +81,9 @@ def extract_from_mrconso(
         concept_text = content['str'].strip()
         cui = content['cui']
         preferred = 1 if content['ispref'] == 'Y' else 0
+
+        if cui_whitelist is not None and cui not in cui_whitelist:
+            continue
 
         if opts.lowercase:
             concept_text = concept_text.lower()
@@ -161,6 +165,10 @@ def parse_args():
         '-E', '--language', default='ENG', choices=LANGUAGES,
         help='Extract concepts of the specified language'
     )
+    ap.add_argument(
+        '-C', '--include-cuis',
+        help='Whitelist of cuis to include in installation'
+    )
     opts = ap.parse_args()
     return opts
 
@@ -220,7 +228,16 @@ def main():
     mrconso_path = os.path.join(opts.umls_installation_path, 'MRCONSO.RRF')
     mrsty_path = os.path.join(opts.umls_installation_path, 'MRSTY.RRF')
 
-    mrconso_iterator = extract_from_mrconso(mrconso_path, mrsty_path, opts)
+    if opts.include_cuis is not None:
+        with open(opts.include_cuis) as f:
+            cui_whitelist = f.read().splitlines()
+    else:
+        cui_whitelist = None
+
+    mrconso_iterator = extract_from_mrconso(
+        mrconso_path, mrsty_path,
+        opts, cui_whitelist=cui_whitelist,
+    )
 
     simstring_dir = os.path.join(opts.destination_path, 'umls-simstring.db')
     cuisty_dir = os.path.join(opts.destination_path, 'cui-semtypes.db')
