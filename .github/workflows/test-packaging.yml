@@ -39,6 +39,8 @@ jobs:
           pip install -r requirements_tests.txt
           pip install --force-reinstall spacy==${{ matrix.spacy-version }}
           pip install pytest build
+          pip install ./
+          python --version
 
         
       - name: Check versions
@@ -48,8 +50,6 @@ jobs:
 
       - name: Run tests
         run: |
-          python --version
-          pip install ./          
           pytest tests/skiptest_spangroup1.py
           pytest tests/skiptest_spangroup2.py
           pytest tests/test_quickumls_component.py
