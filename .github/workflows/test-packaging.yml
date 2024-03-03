@@ -36,7 +36,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install medspacy==${{ matrix.spacy-version }}
+          pip install spacy==${{ matrix.spacy-version }}
           pip install pytest build
 
       - name: Run tests
