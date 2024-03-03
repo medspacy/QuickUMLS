@@ -43,7 +43,8 @@ jobs:
         
       - name: Check versions
         run: |
-          python -c "import spacy; print('spacy version:', spacy.__version__)"      
+          python -c "import spacy; print('spacy version:', spacy.__version__)"   
+          ls /opt/hostedtoolcache/Python/3.8.18/x64/lib/python3.8/site-packages/resources/quickumls/QuickUMLS_SAMPLE_lowercase_POSIX_unqlite   
 
       - name: Run tests
         run: |
