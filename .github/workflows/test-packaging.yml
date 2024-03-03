@@ -39,7 +39,7 @@ jobs:
           pip install -r requirements_tests.txt
           pip install --force-reinstall spacy==${{ matrix.spacy-version }}
           pip install pytest build
-          pip install ./
+          pip install ./          
           python --version
 
         
@@ -47,15 +47,17 @@ jobs:
         run: |
           python -c "import spacy; print('spacy version:', spacy.__version__)"   
           echo "Check if sample kb exists:"
-          python -c "from pathlib import Path; import quickumls; sample_pat=Path(Path(quickumls.__file__).resolve().parent, 'QuickUMLS_SAMPLE_lowercase_POSIX_unqlite'); print(sample_pat, sample_pat.exists());"          
+          cd tests/
+          python -c "from pathlib import Path; import quickumls; sample_pat=Path(Path(quickumls.__file__).resolve().parents[1], 'QuickUMLS_SAMPLE_lowercase_POSIX_unqlite'); print(sample_pat, sample_pat.exists());"          
 
       - name: Run tests
         run: |
-          pytest tests/skiptest_spangroup1.py
-          pytest tests/skiptest_spangroup2.py
-          pytest tests/test_quickumls_component.py
-          pytest tests/test_quickumls_spangroup.py
-          pytest tests/test_basic.py
+          pwd
+          pytest skiptest_spangroup1.py
+          pytest skiptest_spangroup2.py
+          pytest test_quickumls_component.py
+          pytest test_quickumls_spangroup.py
+          pytest test_basic.py
 
       - name: Build package (if on Linux)
         if: runner.os == 'Linux'
