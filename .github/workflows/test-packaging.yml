@@ -52,7 +52,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pwd
+          cd tests
           pytest skiptest_spangroup1.py
           pytest skiptest_spangroup2.py
           pytest test_quickumls_component.py
