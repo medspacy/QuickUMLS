@@ -48,7 +48,7 @@ jobs:
           python -c "import spacy; print('spacy version:', spacy.__version__)"   
           echo "Check if sample kb exists:"
           cd tests/
-          python -c "from pathlib import Path; import quickumls; sample_pat=Path(Path(quickumls.__file__).resolve().parents[1], 'QuickUMLS_SAMPLE_lowercase_POSIX_unqlite'); print(sample_pat, sample_pat.exists());"          
+          python -c "from pathlib import Path; import quickumls; sample_pat=Path(Path(quickumls.__file__).resolve().parents[1],'resources','quickumls','QuickUMLS_SAMPLE_lowercase_POSIX_unqlite'); print(sample_pat, sample_pat.exists());"          
 
       - name: Run tests
         run: |
