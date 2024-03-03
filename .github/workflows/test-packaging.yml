@@ -46,7 +46,8 @@ jobs:
       - name: Check versions
         run: |
           python -c "import spacy; print('spacy version:', spacy.__version__)"   
-          ls /opt/hostedtoolcache/Python/3.8.18/x64/lib/python3.8/site-packages/resources/quickumls/QuickUMLS_SAMPLE_lowercase_POSIX_unqlite   
+          echo "Check if sample kb exists:"
+          python -c "from pathlib import Path; import quickumls; sample_pat=Path(Path(quickumls.__file__).resolve().parent, 'QuickUMLS_SAMPLE_lowercase_POSIX_unqlite'); print(sample_pat, sample_pat.exists());"          
 
       - name: Run tests
         run: |
