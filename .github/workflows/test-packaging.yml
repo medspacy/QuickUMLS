@@ -40,11 +40,11 @@ jobs:
         run: |
           python --version
           pip install ./          
-          pytest -k "skiptest_spangroup1"
-          pytest -k "skiptest_spangroup2"
-          pytest -k "test_quickumls_component"
-          pytest -k "test_quickumls_spangroup"
-          pytest -k "test_basic"
+          pytest tests/skiptest_spangroup1.py
+          pytest tests/skiptest_spangroup2.py
+          pytest tests/test_quickumls_component.py
+          pytest tests/test_quickumls_spangroup.py
+          pytest tests/test_basic.py
 
       - name: Build package (if on Linux)
         if: runner.os == 'Linux'
