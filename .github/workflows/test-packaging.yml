@@ -39,10 +39,11 @@ jobs:
       - name: Run tests
         run: |
           python --version
-          pip install ./
-          # run everything besides the QuickUMLS span group tests...
-          pytest -k "not test_basic"
-          # now in a separate session we can run the QuickUMLS span group tests...
+          pip install ./          
+          pytest -k "skiptest_spangroup1"
+          pytest -k "skiptest_spangroup2"
+          pytest -k "test_quickumls_component"
+          pytest -k "test_quickumls_spangroup"
           pytest -k "test_basic"
 
       - name: Build package (if on Linux)
