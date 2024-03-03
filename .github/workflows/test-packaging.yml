@@ -37,9 +37,16 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install spacy==${{ matrix.spacy-version }}
+          pip install --force-reinstall spacy==${{ matrix.spacy-version }}
           pip install pytest build
 
+        
+      - name: Check versions
+        run: |
+          python -c "import spacy: print('spacy version:', spacy.__version__)"
+          python -c "import medspacy: print('medspacy version:', medspacy.__version__)"        
+      
+      
       - name: Run tests
         run: |
           python --version
