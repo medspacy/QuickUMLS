@@ -51,13 +51,8 @@ jobs:
           python -c "from pathlib import Path; import quickumls; sample_pat=Path(Path(quickumls.__file__).resolve().parents[1],'resources','quickumls','QuickUMLS_SAMPLE_lowercase_POSIX_unqlite'); print(sample_pat, sample_pat.exists());"          
 
       - name: Run tests
-        run: |
-          cd tests
-          pytest skiptest_spangroup1.py
-          pytest skiptest_spangroup2.py
-          pytest test_quickumls_component.py
-          pytest test_quickumls_spangroup.py
-          pytest test_basic.py
+        run: |          
+          pytest 
 
       - name: Build package (if on Linux)
         if: runner.os == 'Linux'
