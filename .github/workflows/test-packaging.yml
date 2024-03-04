@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  test-and-build:
+  teston:
     strategy:      
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
