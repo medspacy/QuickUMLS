@@ -21,7 +21,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.8']
         # python-version: ['3.8', '3.9', '3.10', '3.11']
-        spacy-version: [3.5, 3.6, 3.7]
+        spacy-version: ['spacy3.5', 'spacy3.6', 'spacy3.7']
       fail-fast: false
     runs-on: ${{ matrix.os }}
 
@@ -37,7 +37,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           cd requirements
-          pip install -r requirements_spacy${{ matrix.spacy-version }}.txt  
+          pip install -r requirements_${{ matrix.spacy-version }}.txt  
           python -m spacy download en_core_web_sm        
           pip install pytest build
           cd ..
