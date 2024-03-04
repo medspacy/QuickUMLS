@@ -4,10 +4,13 @@
 # As a temporary solution, run each test file in separate commands. Because it usually won't cause a problem in execution time, when 
 # an initiated spaCy pipeline won't change in a single run.
 
-name: test packaging
+name: auto_tests
 
 on:
-  workflow_dispatch
+  push:
+    branches: [ master, develop, ci_debug ]
+  pull_request:
+    branches: [ master, develop ]
   
 permissions:
   contents: read
