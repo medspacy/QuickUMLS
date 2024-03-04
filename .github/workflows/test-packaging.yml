@@ -1,10 +1,8 @@
-# This workflow will upload a Python Package using Twine when a release is created
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
+# This workflow will try compile on different os with different python versions and different spaCy versions
+# The current test cases enounter issues might related to residual spaCy component (#TODO), which results failures when run using:
+# pytest tests
+# As a temporary solution, run each test file in separate commands. Because it usually won't cause a problem in execution time, when 
+# an initiated spaCy pipeline won't change in a single run.
 
 name: test packaging
 
@@ -51,7 +49,12 @@ jobs:
 
       - name: Run tests
         run: |          
-          pytest -v
+          pytest tests/skiptest_spangroup1.py
+          pytest tests/skiptest_spangroup2.py
+          pytest tests/test_basic.py
+          pytest tests/test_quickumls_component.py
+          pytest tests/test_quickumls_component2.py
+          pytest tests/test_quickumls_spangroup.py
 
       - name: Build package (if on Linux)
         if: runner.os == 'Linux'
