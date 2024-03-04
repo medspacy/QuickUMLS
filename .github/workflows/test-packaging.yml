@@ -39,6 +39,7 @@ jobs:
           cd requirements
           pip install -r requirements_spacy${{ matrix.spacy-version }}.txt          
           pip install pytest build
+          cd ..
           pip install ./          
           python --version
 
