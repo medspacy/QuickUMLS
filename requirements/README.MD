@@ -1,0 +1,1 @@
+This folder contains different configurations of dependencies using different spaCy versions, to make sure the tests pass all supported versions.

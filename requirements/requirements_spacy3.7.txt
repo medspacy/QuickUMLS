@@ -1,4 +1,5 @@
 numpy>=1.8.2
+spacy==3.7
 unidecode>=0.4.19
 nltk>=3.3
 pysimstring

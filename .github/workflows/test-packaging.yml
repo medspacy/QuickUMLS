@@ -36,8 +36,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements_tests.txt
-          pip install --force-reinstall spacy==${{ matrix.spacy-version }}
+          cd requirements
+          pip install -r requirements_spacy${{ matrix.spacy-version }}.txt          
           pip install pytest build
           pip install ./          
           python --version
@@ -46,13 +46,10 @@ jobs:
       - name: Check versions
         run: |
           python -c "import spacy; print('spacy version:', spacy.__version__)"   
-          echo "Check if sample kb exists:"
-          cd tests/
-          python -c "from pathlib import Path; import quickumls; sample_pat=Path(Path(quickumls.__file__).resolve().parents[1],'resources','quickumls','QuickUMLS_SAMPLE_lowercase_POSIX_unqlite'); print(sample_pat, sample_pat.exists());"          
 
       - name: Run tests
         run: |          
-          pytest 
+          pytest -v
 
       - name: Build package (if on Linux)
         if: runner.os == 'Linux'
