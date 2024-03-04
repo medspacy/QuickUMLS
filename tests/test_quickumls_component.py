@@ -4,10 +4,18 @@ import spacy
 import warnings
 from sys import platform
 import pytest
-
+from pathlib import Path
 from quickumls import spacy_component
 
 class TestQuickUMLSSpangroup(unittest.TestCase):
+
+    quickumls_fp=str(Path('output', 'QuickUMLS_SAMPLE_lowercase_UNQLITE'))
+    @classmethod
+    def setUpClass(cls):
+        """Create sample db on the fly, to avoid os dependent path issue.
+        """
+        from .init_db import init
+        quickumls_fp=init(quickumls_fp=cls.quickumls_fp)  
 
     def test_simple_pipeline(self):
         # let's make sure that this pipe has been initialized
@@ -16,7 +24,7 @@ class TestQuickUMLSSpangroup(unittest.TestCase):
         # allow default QuickUMLS (very small sample data) to be loaded
         nlp = spacy.blank("en")
 
-        nlp.add_pipe("medspacy_quickumls")
+        nlp.add_pipe("medspacy_quickumls",config={"quickumls_fp":self.quickumls_fp})
 
         assert nlp
 
@@ -42,7 +50,7 @@ class TestQuickUMLSSpangroup(unittest.TestCase):
         # allow default QuickUMLS (very small sample data) to be loaded
         nlp = spacy.blank("en")
 
-        nlp.add_pipe("medspacy_quickumls", config={"threshold": 1.0})
+        nlp.add_pipe("medspacy_quickumls", config={"threshold": 1.0, "quickumls_fp":self.quickumls_fp})
 
         concept_term = "dipalmitoyllecithin"
         # Let's turn this into a typo which will no longer match...
@@ -59,7 +67,7 @@ class TestQuickUMLSSpangroup(unittest.TestCase):
 
         nlp = spacy.blank("en")
 
-        nlp.add_pipe("medspacy_quickumls", config={"threshold": .9})
+        nlp.add_pipe("medspacy_quickumls", config={"threshold": .9,"quickumls_fp":self.quickumls_fp})
 
         doc = nlp(text)
 
@@ -78,7 +86,7 @@ class TestQuickUMLSSpangroup(unittest.TestCase):
         # allow default QuickUMLS (very small sample data) to be loaded
         nlp = spacy.blank("en")
 
-        nlp.add_pipe("medspacy_quickumls", config={"threshold": 1.0})
+        nlp.add_pipe("medspacy_quickumls", config={"threshold": 1.0, "quickumls_fp":self.quickumls_fp})
 
         concept_term = "dipalmitoyllecithin"
 
