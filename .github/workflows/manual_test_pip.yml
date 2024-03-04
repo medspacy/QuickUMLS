@@ -1,0 +1,41 @@
+name: manual_test_pip
+
+on:
+  workflow_dispatch
+
+jobs:
+
+  test_win_linux_mac:
+  
+    # TODO: Do we care if this only runs on allowed branches since we check push/pull_request above?
+    #if: github.ref == 'refs/heads/master' OR github.ref == 'refs/heads/develop'
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.8, 3.9, "3.10.x", "3.11.x"]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: check clone
+      run: |
+        pwd
+        ls
+        python -c "import shutil;shutil.rmtree('quickumls')"
+        ls
+
+    - name: Set up Python ${{ matrix.python-version }}  ${{ matrix.os }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    - run: |
+        python --version
+        pip install --upgrade pip
+        pip install --use-pep517 unqlite
+        pip install --pre pysimstring medspacy_quickumls
+
+    - name: Test with pytest
+      run: |        
+        pytest

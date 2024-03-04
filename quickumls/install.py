@@ -154,7 +154,7 @@ def parse_args():
         help='Normalize unicode strings to their closest ASCII representation'
     )
     ap.add_argument(
-        '-d', '--database-backend', choices=('unqlite'), default='unqlite',
+        '-d', '--database-backend', choices=('unqlite',), default='unqlite',
         help='KV database to use to store CUIs and semantic types'
     )
     ap.add_argument(
