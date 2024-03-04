@@ -9,8 +9,12 @@ name: auto_tests
 on:
   push:
     branches: [ master, develop, ci_debug ]
+    paths-ignore:
+      - '.github/**'
   pull_request:
     branches: [ master, develop ]
+    paths-ignore:
+      - '.github/**'
   
 permissions:
   contents: read
