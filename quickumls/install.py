@@ -132,6 +132,8 @@ def install_spacy(lang):
         except OSError:
             print(f'SpaCy is not available! Attempting to download and install...')
             spacy.cli.download(SPACY_LANGUAGE_MAP[lang])
+    else:
+        print(f"{lang} seems not a valid model name for this spaCy version {spacy.__version__}.")
 
 
 def parse_args():
