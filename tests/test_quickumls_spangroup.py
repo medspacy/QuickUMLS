@@ -7,12 +7,17 @@ import pytest
 
 from quickumls import spacy_component
 from quickumls.constants import MEDSPACY_DEFAULT_SPAN_GROUP_NAME
-
+from pathlib import Path
 class TestQuickUMLSSpangroup(unittest.TestCase):
 
 
-
-
+    quickumls_fp=str(Path('output', 'QuickUMLS_SAMPLE_lowercase_UNQLITE'))
+    @classmethod
+    def setUpClass(cls):
+        """Create sample db on the fly, to avoid os dependent path issue.
+        """
+        from .init_db import init
+        quickumls_fp=init(quickumls_fp=cls.quickumls_fp)  
 
 
 
@@ -32,7 +37,8 @@ class TestQuickUMLSSpangroup(unittest.TestCase):
 
         nlp.add_pipe("medspacy_quickumls", config={"threshold": 0.7,
                                                    "result_type": "group",
-                                                   "span_group_name": custom_span_group_name})
+                                                   "span_group_name": custom_span_group_name,
+                                                   "quickumls_fp":self.quickumls_fp})
 
         text = "Decreased dipalmitoyllecithin also branching glycosyltransferase and dipalmitoyl phosphatidylcholine"
 

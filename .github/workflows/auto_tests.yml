@@ -1,0 +1,68 @@
+# This workflow will try compile on different os with different python versions and different spaCy versions
+# The current test cases enounter issues might related to residual spaCy component (#TODO), which results failures when run using:
+# pytest tests
+# As a temporary solution, run each test file in separate commands. Because it usually won't cause a problem in execution time, when 
+# an initiated spaCy pipeline won't change in a single run.
+
+name: auto_tests
+
+on:
+  push:
+    branches: [ master, develop, ci_debug ]
+    paths-ignore:
+      - '.github/**'
+  pull_request:
+    branches: [ master, develop ]
+    paths-ignore:
+      - '.github/**'
+  
+permissions:
+  contents: read
+
+jobs:
+  teston:
+    strategy:      
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        # python-version: ['3.8']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        spacy-version: ['spacy3.5', 'spacy3.6', 'spacy3.7']
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          cd requirements
+          pip install -r requirements_${{ matrix.spacy-version }}.txt  
+          python -m spacy download en_core_web_sm        
+          pip install pytest build
+          cd ..
+          pip install ./          
+          python --version
+
+        
+      - name: Check versions
+        run: |
+          python -c "import spacy; print('spacy version:', spacy.__version__)"   
+
+      - name: Run tests
+        run: |          
+          pytest tests/skiptest_spangroup1.py
+          pytest tests/skiptest_spangroup2.py
+          pytest tests/test_basic.py
+          pytest tests/test_quickumls_component.py
+          pytest tests/test_quickumls_component2.py
+          pytest tests/test_quickumls_spangroup.py
+
+      - name: Build package (if on Linux)
+        if: runner.os == 'Linux'
+        run: python -m build
