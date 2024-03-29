@@ -1,5 +1,8 @@
 [NOTE: This is an updated fork of QuickUMLS for usage in medspacy to accelerate recent developments from the medspacy team to incorporate QuickUMLS into spacy pipelines.]
 
+## Release Note
+From version 3.1, we start to isolate the unqlite dependency with our pre-compiled version medspacy-unqlite, because compiling from source code can be troublesome in certain environments especially on Government Furnished Equipments. Also, multiple spaCy versions are included in the continuous integration tests. 
+
 [**NEW: v.1.4 supports starting multiple QuickUMLS matchers concurrently!**](https://giphy.com/embed/BlVnrxJgTGsUw) I've finally added support for [unqlite](https://github.com/coleifer/unqlite-python) as an alternative database for storage of CUIs and Semantic Types (see [here](https://github.com/Georgetown-IR-Lab/QuickUMLS/wiki/Migration-QuickUMLS-1.3-to-1.4) for more details). unqlite-backed QuickUMLS installation support multiple matchers running at the same time. Other than better multi-processing support, unqlite should have better support for unicode.
 
 # QuickUMLS
@@ -13,7 +16,7 @@ This project should be compatible with Python 3 (Python 2 is [no longer supporte
 ## Installation
 
 1. **Obtain a UMLS installation** This tool requires you to have a valid UMLS installation on disk. To install UMLS, you must first obtain a [license](https://uts.nlm.nih.gov/license.html) from the National Library of Medicine; then you should download all UMLS files from [this page](https://www.nlm.nih.gov/research/umls/licensedcontent/umlsknowledgesources.html); finally, you can install UMLS using the [MetamorphoSys](https://www.nlm.nih.gov/pubs/factsheets/umlsmetamorph.html) tool as [explained in this guide](https://www.nlm.nih.gov/research/umls/implementation_resources/metamorphosys/help.html).  The installation can be removed once the system has been initialized.
-2. **Install QuickUMLS**: You can do so by either running `pip install quickumls` or `python setup.py install`. On macOS, using anaconda is **strongly recommended**<sup>†</sup>.
+2. **Install QuickUMLS**: You can do so by either running `pip install medspacy-quickumls` or `python setup.py install`. On macOS, using anaconda is **strongly recommended**<sup>†</sup>.
 3. **Create a QuickUMLS installation** Initialize the system by running `python -m quickumls.install <umls_installation_path> <destination_path>`, where `<umls_installation_path>` is where the installation files are (in particular, we need `MRCONSO.RRF` and `MRSTY.RRF`) and `<destination_path>` is the directory where the QuickUmls data files should be installed. This process will take between 5 and 30 minutes depending how fast the CPU and the drive where UMLS and QuickUMLS files are stored are (on a system with a Intel i7 6700K CPU and a 7200 RPM hard drive, initialization takes 8.5 minutes). `python -m quickumls.install` supports the following optional arguments:
     - `-L` / `--lowercase`: if used, all concept terms are folded to lowercase before being processed. This option typically increases recall, but it might reduce precision;
     - `-U` / `--normalize-unicode`: if used, expressions with non-ASCII characters are converted to the closest combination of ASCII characters.
