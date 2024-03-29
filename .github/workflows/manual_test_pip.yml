@@ -57,14 +57,14 @@ jobs:
         
 
     - name: Check versions
-        run: |
-          python -c "import spacy; print('spacy version:', spacy.__version__)"   
+      run: |
+        python -c "import spacy; print('spacy version:', spacy.__version__)"   
 
     - name: Run tests
-        run: |          
-          pytest tests/skiptest_spangroup1.py
-          pytest tests/skiptest_spangroup2.py
-          pytest tests/test_basic.py
-          pytest tests/test_quickumls_component.py
-          pytest tests/test_quickumls_component2.py
-          pytest tests/test_quickumls_spangroup.py
+      run: |          
+        pytest tests/skiptest_spangroup1.py
+        pytest tests/skiptest_spangroup2.py
+        pytest tests/test_basic.py
+        pytest tests/test_quickumls_component.py
+        pytest tests/test_quickumls_component2.py
+        pytest tests/test_quickumls_spangroup.py
