@@ -1,7 +1,14 @@
 name: manual_test_pip
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      install_prerelease:
+        description: 'Check this to install the prerelease version of medspacy if available and the version is newer than formal release.'  
+        type: boolean   
+        required: false
+        default: false
+
 
 jobs:
 
@@ -33,9 +40,31 @@ jobs:
     - run: |
         python --version
         pip install --upgrade pip
-        pip install --use-pep517 unqlite
-        pip install --pre pysimstring medspacy_quickumls
 
-    - name: Test with pytest
-      run: |        
-        pytest
+    - name: Install prereleased medspacy-quickumls
+      if: ${{ github.event.inputs.install_prerelease == 'true' }} 
+      run: |
+        # use this to avoid install prereleases of dependencies packages
+        pip install medspacy-quickumls
+        pip uninstall -y medspacy-quickumls
+        pip install --pre medspacy-quickumls
+
+    - name: Install formal released medspacy
+      if: ${{ github.event.inputs.install_prerelease == 'false' }}  
+      run: |
+        pip install medspacy-quickumls
+
+        
+
+    - name: Check versions
+        run: |
+          python -c "import spacy; print('spacy version:', spacy.__version__)"   
+
+    - name: Run tests
+        run: |          
+          pytest tests/skiptest_spangroup1.py
+          pytest tests/skiptest_spangroup2.py
+          pytest tests/test_basic.py
+          pytest tests/test_quickumls_component.py
+          pytest tests/test_quickumls_component2.py
+          pytest tests/test_quickumls_spangroup.py
