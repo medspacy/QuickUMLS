@@ -194,5 +194,6 @@ SPACY_LANGUAGE_MAP = {
     'FRE': 'fr_core_news_sm',
     'ITA': 'it_core_news_sm',
     'DUT': 'nl_core_news_sm',
+    'POL': 'pl_core_news_sm',
     'XXX': 'xx'
 }
