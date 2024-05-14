@@ -174,7 +174,7 @@ LANGUAGES = {
     'LAV': None,           # Latvian
     'NOR': 'norwegian',    # Norwegian
     'POL': 'polish',       # Polish
-    'POR': 'portoguese',   # Portuguese
+    'POR': 'portuguese',   # Portuguese
     'RUS': 'russian',      # Russian
     'SCR': None,           # Croatian
     'SPA': 'spanish',      # Spanish
