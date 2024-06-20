@@ -114,13 +114,13 @@ class SpacyQuickUMLS(object):
         # umls_matches below which contains more information and enables overlapping
         if not Span.has_extension("similarity"):
             Span.set_extension('similarity', default = -1.0)
-        if not Span.has_extension("semtypes"): 
+        if not Span.has_extension("semtypes"):
             Span.set_extension('semtypes', default = -1.0)
 
         # match objects are a set, since span objects with the same start/end keys
         # would have the same values for custom attributes in spacy
         if not Span.has_extension("umls_matches"):
-            Span.set_extension('umls_matches', default=set())
+            Span.set_extension('umls_matches', default=[])
 
     @property
     def result_type(self) -> str:
@@ -205,11 +205,13 @@ class SpacyQuickUMLS(object):
                 span._.semtypes = ngram_match_dict['semtypes']
 
                 # let's create this more fully featured match object
-                umls_match = UmlsMatch(cui,
-                                       ngram_match_dict['semtypes'],
-                                       ngram_match_dict['similarity'])
+                umls_match = UmlsMatch(
+                    cui,
+                    ngram_match_dict['semtypes'],
+                    ngram_match_dict['similarity'],
+                )
 
-                span._.umls_matches.add(umls_match)
+                span._.umls_matches.append(umls_match)
 
                 if self.result_type.lower() == "ents":
                     doc.ents = list(doc.ents) + [span]
