@@ -1,4 +1,4 @@
-numpy==1.25
+numpy==1.24
 spacy==3.5
 unidecode>=0.4.19
 nltk>=3.3
