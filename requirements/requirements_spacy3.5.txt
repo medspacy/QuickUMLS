@@ -1,6 +1,6 @@
 spacy==3.5
 unidecode>=0.4.19
-nltk
+nltk>=3.3
 pysimstring
 medspacy_unqlite>=0.8.1
 pytest
