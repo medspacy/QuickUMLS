@@ -42,7 +42,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           cd requirements
-          pip install -r requirements_${{ matrix.spacy-version }}.txt  
+          pip install --force-reinstall -r requirements_${{ matrix.spacy-version }}.txt  
           python -m spacy download en_core_web_sm        
           pip install pytest build
           cd ..
