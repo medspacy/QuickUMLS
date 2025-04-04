@@ -1,11 +1,12 @@
-from typing import Set
+from typing import Any, Dict, List
+import srsly
 
 
 class UmlsMatch:
 
     def __init__(self,
                  cui: str,
-                 semtypes: Set[str],
+                 semtypes: List[str],
                  similarity: float):
         """Instantiate UmlsMatch object
 
@@ -15,10 +16,39 @@ class UmlsMatch:
 
                 Args:
                     cui: UMLS controlled unique identifier (CUI) value (e.g., "C0243095")
-                    semtypes (Set[str]): List of UMLS semantic types as Type Unique Identifier values (TUI)
+                    semtypes (List[str]): List of UMLS semantic types as Type Unique Identifier values (TUI)
                             for this matched concept (e.g., "T203")
                     similarity (float): Similarity score between match and UMLS concept
                 """
         self.cui = cui
         self.semtypes = semtypes
         self.similarity = similarity
+
+    def __repr__(self):
+        return f"UmlsMatch({str(self.cui), str(self.semtypes), str(self.similarity)})"
+
+    def serialized_representation(self) -> Dict[str, Any]:
+        """
+        Returns the serialized representation of the UmlsMatch
+        """
+        return self.__dict__
+
+    @classmethod
+    def from_serialized_representation(cls, serialized_representation):
+        """
+        Creates the UmlsMatch from the serialized representation
+        """
+        return UmlsMatch(**serialized_representation)
+
+@srsly.msgpack_encoders("umls_match")
+def serialize_context_graph(obj, chain=None):
+    if isinstance(obj, UmlsMatch):
+        return {"umls_match": obj.serialized_representation()}
+    return obj if chain is None else chain(obj)
+
+
+@srsly.msgpack_decoders("umls_match")
+def deserialize_context_graph(obj, chain=None):
+    if "umls_match" in obj:
+        return UmlsMatch.from_serialized_representation(obj["umls_match"])
+    return obj if chain is None else chain(obj)

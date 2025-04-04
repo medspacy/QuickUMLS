@@ -316,12 +316,11 @@ class QuickUMLS(object):
             if not self.to_lowercase_flag and ngram_normalized.isupper() and not self.keep_uppercase:
                 ngram_normalized = ngram_normalized.lower()
 
-            prev_cui = None
             ngram_cands = list(self.ss_db.get(ngram_normalized))
 
             ngram_dict = {}
             for match in ngram_cands:
-                cuisem_match = sorted(self.cuisem_db.get(match))
+                cuisem_match = self.cuisem_db.get(match)
 
                 match_similarity = toolbox.get_similarity(
                     x=ngram_normalized,
